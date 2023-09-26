@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 exports.postAddProduct = async (req, res, next) => {
 
-  console.log(req.body)
+  console.log("user",req.user)
   try {
     const { title, imageUrl, price, description } = req.body;
    const product =  new Product ({
@@ -9,12 +9,14 @@ exports.postAddProduct = async (req, res, next) => {
     price  : price,
     description  : description,
     imageUrl : imageUrl,
+    userId : req.user, // mangoose automatically get the id from the user it's own
+    // userId : req.user._id
    });
    console.log(product)
    await product.save(); //this is provided by the mangoose
     res.status(201).json({message : "itemadded successfully"})
   } catch (err) {
-
+  console.log(err);
    res.status(500).json({err : "internal server error"})
   }
 };
@@ -59,8 +61,9 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   try {
-    console.log("herer2")
-    let products = await Product.find();
+    let products = await Product.find()
+    // .populate('userId');
+    console.log(products)
     res.status(201).json(products); // this is line no 61
   } catch (err) {
     console.log(err);
