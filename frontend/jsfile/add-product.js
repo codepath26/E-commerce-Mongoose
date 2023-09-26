@@ -40,23 +40,23 @@ async function fetchProductdetails (){
 }
 
 
-// async function adddata (e){
-//   console.log(Title.value)
-//   e.preventDefault();
-//   console.log(e.target.querySelectorAll("button"))
-//   let obj = {
-//     title: Title.value,
-//     imageUrl: ImageUrl.value,
-//     price: Price.value,
-//     description: Description.value,
-//     }
-//     try{
-//       let product = await axios.post('http://localhost:4000/admin/add-product',obj);
-//       window.location.href ="../htmlFile/adminproducts.html"
-//     }catch(err){
-//       console.log(err)
-//     }
-// }
+async function adddata (e){
+  console.log(Title.value)
+  e.preventDefault();
+  console.log(e.target.querySelectorAll("button"))
+  let obj = {
+    title: Title.value,
+    imageUrl: ImageUrl.value,
+    price: Price.value,
+    description: Description.value,
+    }
+    try{
+      let product = await axios.post('http://localhost:4000/admin/add-product',obj);
+      window.location.href ="../htmlFile/adminproducts.html"
+    }catch(err){
+      console.log(err)
+    }
+}
 
 
 async function adddata (e){
