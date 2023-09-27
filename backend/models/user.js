@@ -72,6 +72,10 @@ userSchema.methods.removeFromCart = function(productId){
           console.log(err);
         }
 }
+userSchema.methods.clearCart = function(){
+  this.cart = { items : []};
+  return this.save();
+}
 
 
 
