@@ -36,7 +36,10 @@ exports.getIndex = async(req, res, next) => {
 exports.getCart = async (req, res, next) => {
   try{
     console.log("at get cart method")
-    let products = await req.user.getCart();
+    const user = await req.user.populate('cart.items.productId');
+    // execPoopulate method is dipricated or any thing else
+    const products = user.cart.items;
+    console.log(products);
     console.log("END get cart method")
     res.status(201).json(products);
   }catch(err){
@@ -50,14 +53,15 @@ exports.getCart = async (req, res, next) => {
 exports.postCart = async (req, res, next) => {
   try {
     console.log("at postCart method");
+    console.log(req.body)
     const prodId = req.body.productId;
-   const product = await Product.findByPk(prodId);
+
+   const product = await Product.findById(prodId);
    console.log("product ===>",product)
    console.log("this user",req.user)
- const result =await  req.user.addToCart(product);
-  console.log("result",result)
+     const result = await  req.user.addToCart(product);
+     console.log("result",result)
     res.status(200).json({message : "done with cart"})
-   
   } catch(err){
     res.status(500).json({err : "internal sever erro"})
   } 
@@ -67,7 +71,8 @@ exports.postCartDeleteProduct =async (req, res, next) => {
   try{
       console.log(req.body.productId)
     const prodId = req.body.productId;
-     const result = await req.user.deleteItemFromcart(prodId)
+     const result = await req.user.removeFromCart(prodId);
+     console.log(result.cart.items)
      res.status(201).json("Item Deleted successfully")
       }
   catch(err){

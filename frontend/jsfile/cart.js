@@ -14,9 +14,9 @@ async function fetchdata (e){
       const cartItem = document.createElement('li');
       cartItem.className = 'list-group-item d-flex justify-content-between';
       cartItem.innerHTML += `
-        ${item.title}
-        <span>${item.quantity.quantity}</span>
-        <input type="hidden" id="productId" name="productId" value = ${item._id}>
+        ${item.productId.title}
+        <span>${item.quantity}</span>
+        <input type="hidden" id="productId" name="productId" value = ${item.productId._id}>
         <button class="btn btn-danger btn-sm delete-button">Delete</button>
       `;
       cartList.appendChild(cartItem);

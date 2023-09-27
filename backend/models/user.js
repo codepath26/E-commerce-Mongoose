@@ -19,7 +19,60 @@ const userSchema = new Schema({
       }
     ]
   }
-})
+});
+
+userSchema.methods.addToCart = async function(product){
+  console.log("at add to cart")
+        const cartprductIndex  = this.cart.items.findIndex(cp =>{
+          console.log(cp)
+          console.log(typeof cp.productId)
+          console.log(typeof product._id)
+          return cp.productId.toString() === product._id.toString();
+        });
+        try{
+        let newQuantity = 1;
+        console.log(cartprductIndex);
+        const updatedCartItems = [...this.cart.items];
+    
+        if(cartprductIndex >= 0){
+        newQuantity = this.cart.items[cartprductIndex].quantity + 1;
+        updatedCartItems[cartprductIndex].quantity = newQuantity 
+        }else{
+          updatedCartItems.push({productId : product._id,
+            quantity : newQuantity
+          });
+        }
+       
+    
+          console.log("this is add to cart")
+          const updatedCart = {items :updatedCartItems}; 
+          // At this time we store the all product which is hardcoded bro so that we need to add onlu refrence to that perticuler product not holl product
+          this.cart = updatedCart;
+          console.log(this.cart)
+          return this.save();
+          }catch(err){
+            console.log(err);
+          }
+        }
+    
+userSchema.methods.removeFromCart = function(productId){
+  try{
+  
+      console.log("starting at the remove cart method");
+          const updatedCartItems = this.cart.items.filter(item =>{
+            console.log(item.productId.toString())
+            console.log(productId.toString())
+            return item.productId.toString() !== productId.toString();
+          });
+          // console.log(updatedCartItems);
+          this.cart.items = updatedCartItems;
+          console.log("this is return vallue of the cart items")
+          return this.save();
+        }catch(err){
+          console.log(err);
+        }
+}
+
 
 
 module.exports = mongoose.model("User" , userSchema);
