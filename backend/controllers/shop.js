@@ -1,5 +1,5 @@
-const { response } = require('express');
 const Product = require('../models/product');
+const Order= require('../models/order');
 
 exports.getProducts =async(req, res, next) => {
   try{  
@@ -35,7 +35,7 @@ exports.getIndex = async(req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try{
-    console.log("at get cart method")
+
     const user = await req.user.populate('cart.items.productId');
     // execPoopulate method is dipricated or any thing else
     const products = user.cart.items;
@@ -86,8 +86,23 @@ exports.postCartDeleteProduct =async (req, res, next) => {
 exports.postOrder = async (req, res, next) => {
   try {
     console.log("at post order")
-    const result = await req.user.addOrder()
-    console.log(result);
+    const user = await req.user.populate('cart.items.productId');
+    console.log(user);
+    const products = await user.cart.items.map(i =>{
+    return {quantity :i.quantity, product :{...i.productId._doc}};
+    });
+
+    const order = new Order({
+      user : {
+        name : req.user.name,
+        userId : req.user,
+      },
+      products : products,
+    })
+
+      await order.save();
+    req.user.clearCart();
+    console.log("product save seccess")
   res.status(200).json({message : "productremove success"})
   } catch (error) {
     res.status(500).json({err : "internal sever erro"})
@@ -97,15 +112,13 @@ exports.postOrder = async (req, res, next) => {
 
 
 exports.getOrderslist = async (req, res, next) => {
-  try {
-
-    const orders = await req.user.getOders();
-    // console.log('this isthe filnal order')
-    // console.log(typeof orders);
-   res.status(201).json(orders);
-  }catch(err){
-    res.status(500).json({err : "internal sever erro"})
-  }
+  try{
+    let orders = await Order.find({'user.userId' : req.user._id})
+    console.log( "products",orders)
+     res.status(201).json(orders)
+    }catch(err){
+      res.status(500).json({err : "internal sever erro"})
+    }  
   
 }
 
